@@ -51,7 +51,7 @@ class Tetris implements TetrisInterface {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x*this.squareSize, y*this.squareSize, this.squareSize, this.squareSize);
 
-    this.ctx.strokeStyle = "BLACK";
+    this.ctx.strokeStyle = this.strokeColor;
     this.ctx.strokeRect(x*this.squareSize,y*this.squareSize,this.squareSize,this.squareSize);
   }
 }
