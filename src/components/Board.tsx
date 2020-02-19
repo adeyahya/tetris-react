@@ -1,9 +1,10 @@
-import React, {FunctionComponent, useRef, useEffect} from 'react';
+import React, {FunctionComponent, useRef, useEffect, useState} from 'react';
 import Tetris from '../Tetris';
 
 const Board: FunctionComponent = () => {
   const canvas: React.MutableRefObject<HTMLCanvasElement> = useRef();
   const tetris: React.MutableRefObject<Tetris> = useRef();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (canvas.current) {
@@ -15,6 +16,7 @@ const Board: FunctionComponent = () => {
       });
 
       tetris.current.drawBoard();
+      setReady(true);
     }
   }, []);
 
@@ -23,7 +25,6 @@ const Board: FunctionComponent = () => {
       <canvas style={{
         border: 'solid black 2px'
       }} ref={canvas} width={400} height={800} />
-      <button>draw</button>
     </>
   )
 }
