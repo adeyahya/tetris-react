@@ -1,3 +1,13 @@
+export const ColorMap = new Map([
+  ['I', '#feb72b'],
+  ['J', '#633a82'],
+  ['L', '#6a8caf'],
+  ['O', '#40e0d0'],
+  ['S', '#6e5773'],
+  ['T', '#ffe75e'],
+  ['Z', '#c9485b']
+]);
+
 export const I = [
 	[
 		[0, 0, 0, 0],

@@ -1,4 +1,5 @@
-import Tetrominoes from './tetrominoes';
+import Color from 'color';
+import Tetrominoes, {ColorMap} from './tetrominoes';
 
 interface TetrisArgs {
   canvas: HTMLCanvasElement;
@@ -31,7 +32,7 @@ class Tetris implements TetrisInterface {
   constructor(args: TetrisArgs) {
     this.ctx = args.canvas.getContext('2d');
     this.squareSize = args.squareSize || 20;
-    this.strokeColor = args.strokeColor || 'black';
+    this.strokeColor = args.strokeColor || '#e2e2e2';
     this.boardColor = args.boardColor || 'white';
     this.rowSize = args.rowSize || 20;
     this.columnSize = args.columnSize || 10;
@@ -79,12 +80,12 @@ class Tetris implements TetrisInterface {
     this.x = 3;
   }
 
-  fill(color: string = this.boardColor, lock = false) {
+  fill(color: string = this.boardColor, lock = false, unDraw = false) {
     if (this.activeTetromino === null) return;
     for(let r = 0; r < this.activeTetromino.length; r++){
       for(let c = 0; c < this.activeTetromino.length; c++){
         if(this.activeTetromino[r][c]){
-          this.drawSquare(this.x + c,this.y + r, color);
+          this.drawSquare(this.x + c,this.y + r, color, unDraw);
           if (lock) {
             this.board[this.y + r][this.x + c] = color;
           }
@@ -149,7 +150,7 @@ class Tetris implements TetrisInterface {
   }
 
   lock() {
-    this.fill('blue', true);
+    this.fill(ColorMap.get(this.activeTetrominoKey), true);
   }
 
   collision(x,y,tetromino){
@@ -181,28 +182,29 @@ class Tetris implements TetrisInterface {
   }
 
   draw() {
-    this.fill('blue');
+    this.fill(ColorMap.get(this.activeTetrominoKey));
   }
 
   unDraw() {
-    this.fill();
+    this.fill(undefined, undefined, true);
   }
 
   drawBoard() {
     this.board.forEach((row, rowIndex) => {
       for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
-        this.drawSquare(columnIndex, rowIndex);
+        this.drawSquare(columnIndex, rowIndex, undefined, true);
       }
     })
   }
 
-  drawSquare(x, y, color = this.boardColor) {
+  drawSquare(x, y, color = this.boardColor, unDraw = false) {
     const targetX = x * this.squareSize;
     const targetY = y * this.squareSize;
     this.ctx.fillStyle = color;
     this.ctx.fillRect(targetX, targetY, this.squareSize, this.squareSize);
-
-    this.ctx.strokeStyle = this.strokeColor;
+    const strokeColor = Color(color).lighten(0.3).hex();
+    this.ctx.lineWidth = this.squareSize / 10;
+    this.ctx.strokeStyle = unDraw ? this.strokeColor : strokeColor;
     this.ctx.strokeRect(targetX, targetY, this.squareSize, this.squareSize);
   }
 }
