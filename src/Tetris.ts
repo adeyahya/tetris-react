@@ -203,7 +203,7 @@ class Tetris implements TetrisInterface {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(targetX, targetY, this.squareSize, this.squareSize);
     const strokeColor = Color(color).lighten(0.3).hex();
-    this.ctx.lineWidth = this.squareSize / 10;
+    this.ctx.lineWidth = this.squareSize / 15;
     this.ctx.strokeStyle = unDraw ? this.strokeColor : strokeColor;
     this.ctx.strokeRect(targetX, targetY, this.squareSize, this.squareSize);
   }

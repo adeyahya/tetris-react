@@ -10,7 +10,7 @@ const Board: FunctionComponent = () => {
     if (canvas.current) {
       tetris.current = new Tetris({
         canvas: canvas.current,
-        squareSize: 30,
+        squareSize: 40,
         rowSize: 20,
         columnSize: 10,
       });
@@ -22,7 +22,7 @@ const Board: FunctionComponent = () => {
 
   return (
     <>
-      <canvas ref={canvas} width={300} height={600} />
+      <canvas ref={canvas} width={400} height={800} />
     </>
   )
 }
