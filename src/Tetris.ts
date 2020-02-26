@@ -29,6 +29,10 @@ class Tetris implements TetrisInterface {
   activeTetrominoN: number;
   x: number;
   y: number;
+  isGameOver: boolean;
+  score: number;
+  dropStart: number;
+  speed: number; // block per second
   constructor(args: TetrisArgs) {
     this.ctx = args.canvas.getContext('2d');
     this.squareSize = args.squareSize || 20;
@@ -41,6 +45,10 @@ class Tetris implements TetrisInterface {
     this.activeTetrominoKey = 'L';
     this.x = 3;
     this.y = -2;
+    this.isGameOver = false;
+    this.score = 0;
+    this.dropStart = 0;
+    this.speed = 1;
     this.board = (() => {
       let board = [];
       for (let row = 0; row < this.rowSize; row++) {
@@ -87,7 +95,9 @@ class Tetris implements TetrisInterface {
         if(this.activeTetromino[r][c]){
           this.drawSquare(this.x + c,this.y + r, color, unDraw);
           if (lock) {
-            this.board[this.y + r][this.x + c] = color;
+            if (this.board[this.y + r] && this.board[this.y + r][this.x + c]) {
+              this.board[this.y + r][this.x + c] = color;
+            }
           }
         }
       }
@@ -150,7 +160,42 @@ class Tetris implements TetrisInterface {
   }
 
   lock() {
+    for (let r = 0; r < this.activeTetromino.length; r++) {
+      for (let c = 0; c < this.activeTetromino.length; c++) {
+        if (!this.activeTetromino[r][c]) continue;
+
+        if (this.y + r < 0) {
+          this.isGameOver = true;
+          alert("Game Over");
+          break;
+        }
+      }
+    }
     this.fill(ColorMap.get(this.activeTetrominoKey), true);
+
+    for (let r = 0; r < this.rowSize; r++) {
+      let isRowFull = true;
+      for (let c = 0; c < this.columnSize; c++) {
+        isRowFull = isRowFull && (this.board[r][c] !== this.boardColor);
+      }
+
+      if (isRowFull) {
+        for (let y = r; y > 1; y--) {
+          for (let c = 0; c < this.columnSize; c++) {
+            this.board[y][c] = this.board[y-1][c];
+          }
+        }
+
+        for(let c = 0; c < this.columnSize; c++){
+          this.board[0][c] = this.boardColor;
+        }
+
+        this.score += 10;
+        this.speed = (this.score / 100) + 1;
+      }
+    }
+
+    this.drawBoard();
   }
 
   collision(x,y,tetromino){
@@ -192,7 +237,7 @@ class Tetris implements TetrisInterface {
   drawBoard() {
     this.board.forEach((row, rowIndex) => {
       for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
-        this.drawSquare(columnIndex, rowIndex, undefined, true);
+        this.drawSquare(columnIndex, rowIndex, row[columnIndex], row[columnIndex] === this.boardColor);
       }
     })
   }
@@ -206,6 +251,25 @@ class Tetris implements TetrisInterface {
     this.ctx.lineWidth = this.squareSize / 15;
     this.ctx.strokeStyle = unDraw ? this.strokeColor : strokeColor;
     this.ctx.strokeRect(targetX, targetY, this.squareSize, this.squareSize);
+  }
+
+  drop = () => {
+    let now = Date.now();
+    let delta = now - this.dropStart;
+    if (delta > (1000 / this.speed)) {
+      this.moveDown();
+      this.dropStart = Date.now();
+    }
+
+    if (!this.isGameOver) {
+      requestAnimationFrame(this.drop);
+    }
+  }
+
+  start() {
+    this.drawBoard();
+    this.dropStart = Date.now();
+    this.drop();
   }
 }
 

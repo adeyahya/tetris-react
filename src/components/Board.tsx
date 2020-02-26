@@ -15,7 +15,7 @@ const Board: FunctionComponent = () => {
         columnSize: 10,
       });
 
-      tetris.current.drawBoard();
+      tetris.current.start();
       setReady(true);
     }
   }, []);
